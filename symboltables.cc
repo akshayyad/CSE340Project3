@@ -49,6 +49,20 @@ void LinkedList::addNode(const std::string &varname, TokenType type)
     }
 }
 
+TokenType LinkedList::search(const std::string &varname)
+{
+    Node *temp = head;
+    while (temp != nullptr)
+    {
+        if (temp->varname == varname)
+        {
+            return temp->type;
+        }
+        temp = temp->next;
+    }
+    return ERROR;
+}
+
 void LinkedList::printList()
 {
     Node *temp = head;
@@ -72,5 +86,18 @@ void LinkedList::clear()
     head = nullptr;
 }
 
-Assignments::Assignments() : assignments() {}
+Assignments::Assignments() : declarations() {}
 Assignments::~Assignments() {}
+
+void Assignments::addAssignment(const std::string &data)
+{
+    declarations.push_back(data);
+}
+
+void Assignments::printAssignments()
+{
+    for (int i = 0; i < declarations.size(); i++)
+    {
+        std::cout << declarations[i] << std::endl;
+    }
+}

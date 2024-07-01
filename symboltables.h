@@ -35,7 +35,7 @@ public:
 
     void addNode(const std::string &varname, TokenType type);
 
-    void *search(const std::string &varname);
+    TokenType search(const std::string &varname);
 
     void printList();
 
@@ -51,11 +51,11 @@ class Assignments
 public:
     Assignments();
     ~Assignments();
-    void addNode(const std::string &data);
-    void printList();
+    void addAssignment(const std::string &data);
+    void printAssignments();
 
 private:
-    std::vector<std::string> assignments;
+    std::vector<std::string> declarations;
 };
 
 #endif // LINKEDLIST_H

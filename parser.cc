@@ -19,6 +19,56 @@ void syntax_error()
 	exit(1);
 }
 
+void c1_error(int line_no)
+{
+	printf("TYPE MISMATCH %d C1\n", line_no);
+	exit(1);
+}
+
+void c2_error(int line_no)
+{
+	printf("TYPE MISMATCH %d C2\n", line_no);
+	exit(1);
+}
+
+void c3_error(int line_no)
+{
+	printf("TYPE MISMATCH %d C3\n", line_no);
+	exit(1);
+}
+
+void c4_error(int line_no)
+{
+	printf("TYPE MISMATCH %d C4\n", line_no);
+	exit(1);
+}
+
+void c5_error(int line_no)
+{
+	printf("TYPE MISMATCH %d C5\n", line_no);
+	exit(1);
+}
+
+string changeType(TokenType type)
+{
+	if (type == INT)
+	{
+		return "int";
+	}
+	else if (type == REAL)
+	{
+		return "real";
+	}
+	else if (type == BOO)
+	{
+		return "bool";
+	}
+	else
+	{
+		return "ERROR";
+	}
+}
+
 /*
  * Completed Function.
  * Entry point to the program.
@@ -228,6 +278,7 @@ int Parser::parse_body()
 	token = lexer.GetToken();
 	if (token.token_type == LBRACE)
 	{
+		// printf("Yo\n");
 		parse_stmtlist();
 		token = lexer.GetToken();
 		if (token.token_type != RBRACE)
@@ -316,16 +367,14 @@ int Parser::parse_assstmt()
 	{
 		syntax_error();
 	}
-	// Do something with ID
-	// string id = token.lexeme;
-	// TokenType tempTokenType = token.token_type;
 
 	token = lexer.GetToken();
 	if (token.token_type != EQUAL)
 	{
 		syntax_error();
 	}
-	int ret = parse_expression();
+
+	parse_expression();
 
 	token = lexer.GetToken();
 	if (token.token_type != SEMICOLON)
@@ -355,18 +404,9 @@ int Parser::parse_expression()
 	else if (token.token_type == PLUS || token.token_type == MINUS || token.token_type == MULT || token.token_type == DIV)
 	{
 		lexer.UngetToken(token);
-		int operatorType = parse_binaryOperator();
-		int firstOperandType = parse_expression();
-		int secondOperandType = parse_expression();
-		if (firstOperandType == secondOperandType)
-		{
-			// Do something with these Tokens
-		}
-		else
-		{
-			printf("TYPE MISMATCH %d C2\n", token.line_no);
-			exit(1);
-		}
+		parse_binaryOperator();
+		parse_expression();
+		parse_expression();
 	}
 	else if (token.token_type == GREATER || token.token_type == LESS || token.token_type == GTEQ || token.token_type == LTEQ || token.token_type == EQUAL || token.token_type == NOTEQUAL)
 	{
@@ -378,8 +418,7 @@ int Parser::parse_expression()
 	else if (token.token_type == ID || token.token_type == NUM || token.token_type == REALNUM || token.token_type == TR || token.token_type == FA)
 	{
 		lexer.UngetToken(token);
-		TokenType temp = parse_primary();
-		// Need to figure out what to return, TokenType or int
+		parse_primary();
 	}
 	else
 	{
@@ -417,16 +456,15 @@ int Parser::parse_binaryOperator()
 #ifdef DEBUG
 	cout << "Entered Binary Operator" << endl;
 #endif
+	printf("BinaryOperatorCalled\n");
 	token = lexer.GetToken();
 	if (token.token_type == PLUS || token.token_type == MINUS || token.token_type == MULT || token.token_type == DIV)
 	{
 		// Do something with these Tokens
-		return 1;
 	}
 	else if (token.token_type == GREATER || token.token_type == LESS || token.token_type == GTEQ || token.token_type == LTEQ || token.token_type == EQUAL || token.token_type == NOTEQUAL)
 	{
 		// Do something with these Tokens
-		return 2;
 	}
 	else
 	{
@@ -449,7 +487,6 @@ TokenType Parser::parse_primary()
 	if (token.token_type == ID || token.token_type == NUM || token.token_type == REALNUM || token.token_type == TR || token.token_type == FA)
 	{
 		// Do something with these Tokens
-		return token.token_type;
 	}
 	else
 	{
@@ -622,6 +659,7 @@ int main()
 	Parser *parseProgram = new Parser();
 	i = parseProgram->parse_program();
 	parseProgram->symbol_table.printList();
+	parseProgram->assignments.printAssignments();
 	cout << "\nEnd of Program" << endl;
 	return 0;
 }
