@@ -367,6 +367,15 @@ int Parser::parse_assstmt()
 	{
 		syntax_error();
 	}
+	// Get Type of the ID
+	TokenType lhs = symbol_table.search(token.lexeme);
+	if (lhs != ERROR)
+	{
+		// Add the assignment to the list
+		string assignment = token.lexeme + ": " + changeType(lhs) + " #";
+		assignments.addAssignment(assignment);
+	}
+	// printf("LHS ID Type: %s\n", changeType(idType).c_str());
 
 	token = lexer.GetToken();
 	if (token.token_type != EQUAL)
@@ -374,7 +383,24 @@ int Parser::parse_assstmt()
 		syntax_error();
 	}
 
-	parse_expression();
+	TokenType rhs = (TokenType)parse_expression();
+	// printf("RHS Type: %s\n", changeType(rhs).c_str());
+	// Now check if the types match
+	if (lhs != ERROR)
+	{
+		if (lhs != rhs)
+		{
+			c1_error(token.line_no);
+		}
+	}
+	else if (lhs == ERROR)
+	{
+		if (rhs != ERROR)
+		{
+			lhs = rhs;
+			// Add the string assignment to the list
+		}
+	}
 
 	token = lexer.GetToken();
 	if (token.token_type != SEMICOLON)
@@ -404,9 +430,30 @@ int Parser::parse_expression()
 	else if (token.token_type == PLUS || token.token_type == MINUS || token.token_type == MULT || token.token_type == DIV)
 	{
 		lexer.UngetToken(token);
-		parse_binaryOperator();
-		parse_expression();
-		parse_expression();
+		int operatorType = parse_binaryOperator();
+		// printf("Operator Type: %d\n", operatorType);
+		TokenType firstOperandType = (TokenType)parse_expression();
+		// printf("First Operand Type: %s\n", changeType(firstOperandType).c_str());
+		TokenType secondOperandType = (TokenType)parse_expression();
+		// printf("Second Operand Type: %s\n", changeType(secondOperandType).c_str());
+		if (firstOperandType != secondOperandType)
+		{
+			c2_error(token.line_no);
+		}
+		else if (firstOperandType == ERROR && secondOperandType != ERROR)
+		{
+			return secondOperandType;
+			// Have to Do something with the Implicit Vars Here
+		}
+		else if (firstOperandType == ERROR && secondOperandType == ERROR)
+		{
+			return ERROR;
+		}
+		else
+		{
+			return firstOperandType;
+		}
+		// parse_expression();
 	}
 	else if (token.token_type == GREATER || token.token_type == LESS || token.token_type == GTEQ || token.token_type == LTEQ || token.token_type == EQUAL || token.token_type == NOTEQUAL)
 	{
@@ -418,7 +465,8 @@ int Parser::parse_expression()
 	else if (token.token_type == ID || token.token_type == NUM || token.token_type == REALNUM || token.token_type == TR || token.token_type == FA)
 	{
 		lexer.UngetToken(token);
-		parse_primary();
+		// printf("%s\n", token.lexeme.c_str());
+		return parse_primary();
 	}
 	else
 	{
@@ -456,15 +504,17 @@ int Parser::parse_binaryOperator()
 #ifdef DEBUG
 	cout << "Entered Binary Operator" << endl;
 #endif
-	printf("BinaryOperatorCalled\n");
+	// printf("BinaryOperatorCalled\n");
 	token = lexer.GetToken();
 	if (token.token_type == PLUS || token.token_type == MINUS || token.token_type == MULT || token.token_type == DIV)
 	{
 		// Do something with these Tokens
+		return 1;
 	}
 	else if (token.token_type == GREATER || token.token_type == LESS || token.token_type == GTEQ || token.token_type == LTEQ || token.token_type == EQUAL || token.token_type == NOTEQUAL)
 	{
 		// Do something with these Tokens
+		return 2;
 	}
 	else
 	{
@@ -487,6 +537,37 @@ TokenType Parser::parse_primary()
 	if (token.token_type == ID || token.token_type == NUM || token.token_type == REALNUM || token.token_type == TR || token.token_type == FA)
 	{
 		// Do something with these Tokens
+		if (token.token_type == ID)
+		{
+			// printf("ID: %s\n", token.lexeme.c_str());
+			TokenType type = symbol_table.search(token.lexeme);
+			if (type != ERROR)
+			{
+				string temp = token.lexeme + ": " + changeType(type) + " #";
+				assignments.addAssignment(temp);
+			}
+			else
+			{
+				// Add to the symbol table
+				symbol_table.addNode(token.lexeme, ERROR);
+			}
+			return type;
+		}
+		else if (token.token_type == NUM)
+		{
+			// printf("NUM: %s\n", token.lexeme.c_str());
+			return INT;
+		}
+		else if (token.token_type == REALNUM)
+		{
+			// printf("REALNUM: %s\n", token.lexeme.c_str());
+			return REAL;
+		}
+		else if (token.token_type == TR || token.token_type == FA)
+		{
+			// printf("TR/FA: %s\n", token.lexeme.c_str());
+			return BOO;
+		}
 	}
 	else
 	{
@@ -658,8 +739,8 @@ int main()
 	int i;
 	Parser *parseProgram = new Parser();
 	i = parseProgram->parse_program();
-	parseProgram->symbol_table.printList();
+	// parseProgram->symbol_table.printList();
 	parseProgram->assignments.printAssignments();
-	cout << "\nEnd of Program" << endl;
+	// cout << "\nEnd of Program" << endl;
 	return 0;
 }
