@@ -12,6 +12,8 @@
 
 using namespace std;
 
+int group = 4;
+
 // Syntax Error Function.
 void syntax_error()
 {
@@ -69,6 +71,26 @@ string changeType(TokenType type)
 	}
 }
 
+string changeTypeFromInt(int type)
+{
+	if (type == INT)
+	{
+		return "int";
+	}
+	else if (type == REAL)
+	{
+		return "real";
+	}
+	else if (type == BOO)
+	{
+		return "bool";
+	}
+	else
+	{
+		return "ERROR";
+	}
+}
+
 /*
  * Completed Function.
  * Entry point to the program.
@@ -83,10 +105,10 @@ int Parser::parse_program()
 	{
 		lexer.UngetToken(token);
 		parse_globalVars();
-		/*
-		symbol_table.printList();
-		exit(1);
-		*/
+		/**/
+		// symbol_table.printList();
+		//  exit(0);
+		/**/
 		parse_body();
 	}
 	else if (token.token_type == LBRACE)
@@ -154,6 +176,8 @@ int Parser::parse_vardecl()
 	}
 	lexer.UngetToken(token);
 	// Gather ID token info here
+	// printf("Hello\n");
+	// Get amount of vars in the varlist
 	int numOfVars = parse_varlist();
 
 	token = lexer.GetToken();
@@ -166,6 +190,7 @@ int Parser::parse_vardecl()
 	{
 		lexer.UngetToken(token);
 		parse_typename(numOfVars);
+		// symbol_table.assignTypes(numOfVars, token.token_type);
 		token = lexer.GetToken();
 		if (token.token_type != SEMICOLON)
 		{
@@ -205,7 +230,7 @@ int Parser::parse_varlist()
 				// Gather ID token info here
 				// Add the ID to the symbol table's linked list
 				// printf("Breh\n");
-				symbol_table.addNode(token.lexeme, ID);
+				symbol_table.addNode(token.lexeme, ID, group);
 				// symbol_table.printList();
 				amount++;
 				token = lexer.GetToken();
@@ -215,16 +240,18 @@ int Parser::parse_varlist()
 				}
 				t2 = lexer.GetToken();
 			}
-			symbol_table.addNode(token.lexeme, ID);
+			symbol_table.addNode(token.lexeme, ID, group);
 			amount++;
 			lexer.UngetToken(t2);
+			// printf("Hello\n");
+			// symbol_table.printList();
 			return amount;
 		}
 		else
 		{
 			// Gather singular ID token info here
 			// Add the ID to the symbol table's linked list
-			symbol_table.addNode(token.lexeme, ID);
+			symbol_table.addNode(token.lexeme, ID, group);
 			lexer.UngetToken(t2);
 			return 1;
 		}
@@ -368,11 +395,11 @@ int Parser::parse_assstmt()
 		syntax_error();
 	}
 	// Get Type of the ID
-	TokenType lhs = symbol_table.search(token.lexeme);
+	int lhs = symbol_table.search(token.lexeme);
 	if (lhs != ERROR)
 	{
 		// Add the assignment to the list
-		string assignment = token.lexeme + ": " + changeType(lhs) + " #";
+		string assignment = token.lexeme + ": " + changeTypeFromInt(lhs) + " #";
 		assignments.addAssignment(assignment);
 	}
 	// printf("LHS ID Type: %s\n", changeType(idType).c_str());
@@ -383,7 +410,7 @@ int Parser::parse_assstmt()
 		syntax_error();
 	}
 
-	TokenType rhs = (TokenType)parse_expression();
+	int rhs = parse_expression();
 	// printf("RHS Type: %s\n", changeType(rhs).c_str());
 	// Now check if the types match
 	if (lhs != ERROR)
@@ -429,21 +456,44 @@ int Parser::parse_expression()
 	}
 	else if (token.token_type == PLUS || token.token_type == MINUS || token.token_type == MULT || token.token_type == DIV)
 	{
+		group++;
+		int currentGroup = group;
+
 		lexer.UngetToken(token);
 		int operatorType = parse_binaryOperator();
 		// printf("Operator Type: %d\n", operatorType);
-		TokenType firstOperandType = (TokenType)parse_expression();
+		int firstOperandType = parse_expression();
 		// printf("First Operand Type: %s\n", changeType(firstOperandType).c_str());
-		TokenType secondOperandType = (TokenType)parse_expression();
+		int secondOperandType = parse_expression();
 		// printf("Second Operand Type: %s\n", changeType(secondOperandType).c_str());
 
 		// Check if the types match
-		if (firstOperandType == secondOperandType)
+		if (firstOperandType != -1 && secondOperandType != -1)
 		{
-			return firstOperandType;
+			if (firstOperandType == secondOperandType)
+			{
+				return firstOperandType;
+			}
+			else
+			{
+				c2_error(token.line_no);
+			}
 		}
-		else if (firstOperandType == ERROR && secondOperandType != ERROR)
+		else if (firstOperandType == -1 && secondOperandType != -1)
 		{
+			// Assign var types
+			// printf("I am called\n");
+		}
+		else if (firstOperandType != -1 && secondOperandType == -1)
+		{
+			// Assign Var Types
+			// printf("I am called2\n");
+			// symbol_table.printList();
+			string topVar = assignments.removeLastImplicitVar();
+		}
+		else // both return implicit
+		{
+			// printf("Yo\n");
 		}
 
 		/*
@@ -470,6 +520,9 @@ int Parser::parse_expression()
 	}
 	else if (token.token_type == GREATER || token.token_type == LESS || token.token_type == GTEQ || token.token_type == LTEQ || token.token_type == EQUAL || token.token_type == NOTEQUAL)
 	{
+		group++;
+		int currentGroup = group;
+
 		lexer.UngetToken(token);
 		parse_binaryOperator();
 		parse_expression();
@@ -477,10 +530,11 @@ int Parser::parse_expression()
 	}
 	else if (token.token_type == ID || token.token_type == NUM || token.token_type == REALNUM || token.token_type == TR || token.token_type == FA)
 	{
+		// printf("Calling on %s\n", token.lexeme.c_str());
 		lexer.UngetToken(token);
 		// printf("%s\n", token.lexeme.c_str());
-		TokenType type = parse_primary();
-		if (type == ERROR)
+		int type = parse_primary();
+		if (type == -1)
 		{
 			// Set implicit var in Assignments class to current ID
 			assignments.setImplicitVar(token.lexeme);
@@ -547,7 +601,7 @@ int Parser::parse_binaryOperator()
  * Completed Function
  * Acts as our primary handler
  */
-TokenType Parser::parse_primary()
+int Parser::parse_primary()
 {
 #ifdef DEBUG
 	cout << "Entered Parse Primary" << endl;
@@ -559,16 +613,16 @@ TokenType Parser::parse_primary()
 		if (token.token_type == ID)
 		{
 			// printf("ID: %s\n", token.lexeme.c_str());
-			TokenType type = symbol_table.search(token.lexeme);
-			if (type != ERROR)
+			int type = symbol_table.search(token.lexeme);
+			if (type != -1)
 			{
-				string temp = token.lexeme + ": " + changeType(type) + " #";
+				string temp = token.lexeme + ": " + changeTypeFromInt(type) + " #";
 				assignments.addAssignment(temp);
 			}
 			else
 			{
 				// Add to the symbol table
-				// symbol_table.addNode(token.lexeme, ERROR);
+				symbol_table.addNode(token.lexeme, type, group);
 				assignments.addImplicitVar(token.lexeme);
 			}
 			return type;
@@ -594,7 +648,7 @@ TokenType Parser::parse_primary()
 		syntax_error();
 	}
 
-	return ERROR;
+	return -1;
 }
 
 /*

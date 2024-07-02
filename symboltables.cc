@@ -12,7 +12,7 @@
 #include "lexer.h"
 
 // Node constructor
-LinkedList::Node::Node(const std::string &varname, TokenType type)
+LinkedList::Node::Node(const std::string &varname, int type)
     : varname(varname), type(type), binNo(0), next(nullptr), prev(nullptr) {}
 
 // DoublyLinkedList constructor
@@ -31,18 +31,18 @@ LinkedList::Node *LinkedList::getHead() const
 
 void LinkedList::assignTypes(int amount, TokenType type)
 {
-    Node *temp = head;
-    for (int i = 0; i < amount & temp != nullptr; i++)
+    Node *temp = tail;
+    for (int i = 0; i < amount && temp != nullptr; i++)
     {
         temp->type = type;
-        temp = temp->next;
+        temp = temp->prev;
     }
 }
 
-void LinkedList::addNode(const std::string &varname, TokenType type, int binNo)
+void LinkedList::addNode(const std::string &varname, int type, int group)
 {
     Node *newNode = new Node(varname, type);
-    newNode->binNo = binNo;
+    newNode->group = group;
     if (head == nullptr)
     {
         head = tail = newNode;
@@ -74,7 +74,7 @@ void LinkedList::printList() const
     Node *temp = head;
     while (temp != nullptr)
     {
-        std::cout << temp->varname << " " << temp->type << std::endl;
+        std::cout << temp->varname << " " << temp->type << " " << temp->group << std::endl;
         temp = temp->next;
     }
     std::cout << std::endl;
@@ -116,4 +116,11 @@ void Assignments::setImplicitVar(const std::string name)
 void Assignments::addImplicitVar(const std::string name)
 {
     implicitvars.push_back(name);
+}
+
+std::string Assignments::removeLastImplicitVar()
+{
+    std::string temp = implicitvars.back();
+    implicitvars.pop_back();
+    return temp;
 }

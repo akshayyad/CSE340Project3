@@ -21,12 +21,13 @@ private:
     struct Node
     {
         std::string varname;
-        TokenType type;
+        int type;
         int binNo;
         Node *next;
         Node *prev;
+        int group;
 
-        Node(const std::string &varname, TokenType type);
+        Node(const std::string &varname, int type);
     };
 
     Node *head;
@@ -38,7 +39,7 @@ public:
 
     Node *getHead() const;
     void assignTypes(int amount, TokenType type);
-    void addNode(const std::string &varname, TokenType type, int binNo);
+    void addNode(const std::string &varname, int type, int group);
     int search(const std::string &varname);
     void printList() const;
     void clear();
@@ -54,6 +55,7 @@ public:
     void setImplicitVar(const std::string name);
 
     void addImplicitVar(const std::string name);
+    std::string removeLastImplicitVar();
 
 private:
     std::vector<std::string> declarations;

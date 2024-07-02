@@ -28,7 +28,7 @@ private:
 	int parse_varlist();
 	int parse_unaryOperator();
 	int parse_binaryOperator();
-	TokenType parse_primary();
+	int parse_primary();
 	int parse_expression();
 	int parse_assstmt();
 	int parse_case();

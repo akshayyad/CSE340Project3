@@ -5,7 +5,7 @@ cr:
 	g++ parser.cc symboltables.cc lexer.cc inputbuf.cc
 	./test.sh
 
-simple:
+extra:
 	g++ parser.cc symboltables.cc lexer.cc inputbuf.cc
 	./a.out < extra.txt
 

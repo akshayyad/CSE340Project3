@@ -18,28 +18,28 @@ typedef enum
 {
   END_OF_FILE = 0,
   INT,
-  REAL,
+  REAL, // 2
   BOO,
   TR,
-  FA,
+  FA, // 5
   IF,
   WHILE,
-  SWITCH,
+  SWITCH, // 8
   CASE,
   PUBLIC,
-  PRIVATE,
+  PRIVATE, // 11
   NUM,
   REALNUM,
   NOT,
-  PLUS,
+  PLUS, // 15
   MINUS,
-  MULT,
+  MULT, // 17
   DIV,
-  GTEQ,
+  GTEQ, // 19
   GREATER,
-  LTEQ,
+  LTEQ, // 21
   NOTEQUAL,
-  LESS,
+  LESS, // 23
   LPAREN,
   RPAREN,
   EQUAL,
