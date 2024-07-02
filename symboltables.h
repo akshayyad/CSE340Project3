@@ -17,32 +17,30 @@
 class LinkedList
 {
 public:
+private:
     struct Node
     {
         std::string varname;
         TokenType type;
+        int binNo;
         Node *next;
+        Node *prev;
 
-        Node(const std::string varname, TokenType type);
+        Node(const std::string &varname, TokenType type);
     };
 
+    Node *head;
+    Node *tail;
+
+public:
     LinkedList();
     ~LinkedList();
 
     Node *getHead() const;
-
     void assignTypes(int amount, TokenType type);
-
-    void addNode(const std::string &varname, TokenType type);
-
-    TokenType search(const std::string &varname);
-
-    void printList();
-
-    void remove(const std::string &varname);
-
-private:
-    Node *head;
+    void addNode(const std::string &varname, TokenType type, int binNo);
+    int search(const std::string &varname);
+    void printList() const;
     void clear();
 };
 
@@ -53,9 +51,14 @@ public:
     ~Assignments();
     void addAssignment(const std::string &data);
     void printAssignments();
+    void setImplicitVar(const std::string name);
+
+    void addImplicitVar(const std::string name);
 
 private:
     std::vector<std::string> declarations;
+    std::string implicitVar;
+    std::vector<std::string> implicitvars;
 };
 
 #endif // LINKEDLIST_H

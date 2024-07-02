@@ -436,14 +436,26 @@ int Parser::parse_expression()
 		// printf("First Operand Type: %s\n", changeType(firstOperandType).c_str());
 		TokenType secondOperandType = (TokenType)parse_expression();
 		// printf("Second Operand Type: %s\n", changeType(secondOperandType).c_str());
+
+		// Check if the types match
+		if (firstOperandType == secondOperandType)
+		{
+			return firstOperandType;
+		}
+		else if (firstOperandType == ERROR && secondOperandType != ERROR)
+		{
+		}
+
+		/*
 		if (firstOperandType != secondOperandType)
 		{
 			c2_error(token.line_no);
 		}
 		else if (firstOperandType == ERROR && secondOperandType != ERROR)
 		{
-			return secondOperandType;
 			// Have to Do something with the Implicit Vars Here
+
+			return secondOperandType;
 		}
 		else if (firstOperandType == ERROR && secondOperandType == ERROR)
 		{
@@ -453,6 +465,7 @@ int Parser::parse_expression()
 		{
 			return firstOperandType;
 		}
+		*/
 		// parse_expression();
 	}
 	else if (token.token_type == GREATER || token.token_type == LESS || token.token_type == GTEQ || token.token_type == LTEQ || token.token_type == EQUAL || token.token_type == NOTEQUAL)
@@ -466,7 +479,13 @@ int Parser::parse_expression()
 	{
 		lexer.UngetToken(token);
 		// printf("%s\n", token.lexeme.c_str());
-		return parse_primary();
+		TokenType type = parse_primary();
+		if (type == ERROR)
+		{
+			// Set implicit var in Assignments class to current ID
+			assignments.setImplicitVar(token.lexeme);
+		}
+		return type;
 	}
 	else
 	{
@@ -549,7 +568,8 @@ TokenType Parser::parse_primary()
 			else
 			{
 				// Add to the symbol table
-				symbol_table.addNode(token.lexeme, ERROR);
+				// symbol_table.addNode(token.lexeme, ERROR);
+				assignments.addImplicitVar(token.lexeme);
 			}
 			return type;
 		}

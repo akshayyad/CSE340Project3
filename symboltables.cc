@@ -11,10 +11,14 @@
 #include "symboltables.h"
 #include "lexer.h"
 
-LinkedList::Node::Node(const std::string varname, TokenType type) : varname(varname), type(type), next(nullptr) {}
+// Node constructor
+LinkedList::Node::Node(const std::string &varname, TokenType type)
+    : varname(varname), type(type), binNo(0), next(nullptr), prev(nullptr) {}
 
-LinkedList::LinkedList() : head(nullptr) {}
+// DoublyLinkedList constructor
+LinkedList::LinkedList() : head(nullptr), tail(nullptr) {}
 
+// DoublyLinkedList destructor
 LinkedList::~LinkedList()
 {
     clear();
@@ -28,28 +32,30 @@ LinkedList::Node *LinkedList::getHead() const
 void LinkedList::assignTypes(int amount, TokenType type)
 {
     Node *temp = head;
-    for (int i = 0; i < amount; i++)
+    for (int i = 0; i < amount & temp != nullptr; i++)
     {
         temp->type = type;
         temp = temp->next;
     }
 }
 
-void LinkedList::addNode(const std::string &varname, TokenType type)
+void LinkedList::addNode(const std::string &varname, TokenType type, int binNo)
 {
     Node *newNode = new Node(varname, type);
+    newNode->binNo = binNo;
     if (head == nullptr)
     {
-        head = newNode;
+        head = tail = newNode;
     }
     else
     {
-        newNode->next = head;
-        head = newNode;
+        tail->next = newNode;
+        newNode->prev = tail;
+        tail = newNode;
     }
 }
 
-TokenType LinkedList::search(const std::string &varname)
+int LinkedList::search(const std::string &varname)
 {
     Node *temp = head;
     while (temp != nullptr)
@@ -60,10 +66,10 @@ TokenType LinkedList::search(const std::string &varname)
         }
         temp = temp->next;
     }
-    return ERROR;
+    return -1;
 }
 
-void LinkedList::printList()
+void LinkedList::printList() const
 {
     Node *temp = head;
     while (temp != nullptr)
@@ -83,7 +89,7 @@ void LinkedList::clear()
         delete current;
         current = next;
     }
-    head = nullptr;
+    head = tail = nullptr;
 }
 
 Assignments::Assignments() : declarations() {}
@@ -100,4 +106,14 @@ void Assignments::printAssignments()
     {
         std::cout << declarations[i] << std::endl;
     }
+}
+
+void Assignments::setImplicitVar(const std::string name)
+{
+    implicitVar = name;
+}
+
+void Assignments::addImplicitVar(const std::string name)
+{
+    implicitvars.push_back(name);
 }
