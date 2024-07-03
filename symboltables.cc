@@ -16,7 +16,7 @@ LinkedList::Node::Node(const std::string &varname, int type)
     : varname(varname), type(type), binNo(0), next(nullptr), prev(nullptr) {}
 
 // DoublyLinkedList constructor
-LinkedList::LinkedList() : head(nullptr), tail(nullptr) {}
+LinkedList::LinkedList() : head(nullptr), tail(nullptr), global(5) {}
 
 // DoublyLinkedList destructor
 LinkedList::~LinkedList()
@@ -58,15 +58,40 @@ void LinkedList::addNode(const std::string &varname, int type, int group)
 int LinkedList::search(const std::string &varname)
 {
     Node *temp = head;
+    if (temp == nullptr)
+    {
+        addNode(varname, global, -2);
+        global++;
+        return (5);
+    }
+    else
+    {
+        while (temp != nullptr)
+        {
+            if (temp->varname == varname)
+            {
+                return temp->type;
+            }
+            temp = temp->next;
+        }
+        addNode(varname, global, global);
+        global++;
+        return global - 1;
+    }
+    return -1;
+}
+
+void LinkedList::rearrangeTypes(int oldType, int newType)
+{
+    Node *temp = head;
     while (temp != nullptr)
     {
-        if (temp->varname == varname)
+        if (temp->type == oldType)
         {
-            return temp->type;
+            temp->type = newType;
         }
         temp = temp->next;
     }
-    return -1;
 }
 
 void LinkedList::printList() const
@@ -74,7 +99,7 @@ void LinkedList::printList() const
     Node *temp = head;
     while (temp != nullptr)
     {
-        std::cout << temp->varname << " " << temp->type << " " << temp->group << std::endl;
+        std::cout << temp->varname << " " << temp->type << /*" " << temp->group <<*/ std::endl;
         temp = temp->next;
     }
     std::cout << std::endl;

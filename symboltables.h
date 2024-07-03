@@ -37,10 +37,13 @@ public:
     LinkedList();
     ~LinkedList();
 
+    int global;
+
     Node *getHead() const;
     void assignTypes(int amount, TokenType type);
     void addNode(const std::string &varname, int type, int group);
     int search(const std::string &varname);
+    void rearrangeTypes(int oldType, int newType);
     void printList() const;
     void clear();
 };
