@@ -26,6 +26,7 @@ private:
         Node *next;
         Node *prev;
         int group;
+        int printed;
 
         Node(const std::string &varname, int type);
     };

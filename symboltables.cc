@@ -13,7 +13,7 @@
 
 // Node constructor
 LinkedList::Node::Node(const std::string &varname, int type)
-    : varname(varname), type(type), binNo(0), next(nullptr), prev(nullptr) {}
+    : varname(varname), type(type), binNo(0), next(nullptr), prev(nullptr), printed(0) {}
 
 // DoublyLinkedList constructor
 LinkedList::LinkedList() : head(nullptr), tail(nullptr), global(5) {}
@@ -109,8 +109,7 @@ std::string LinkedList::intToType(int type)
     }
 }
 
-/*
-void LinkedList::outputVars()
+/*void LinkedList::outputVars()
 {
     Node *temp = head;
     // First Print out the Known Vars
@@ -154,12 +153,65 @@ void LinkedList::outputVars()
             std::cout << currentGroup << ": ? #" << std::endl;
         }
     }
-}
-*/
+} */
 
-void LinkedList::outputVars()
+/**/ void LinkedList::outputVars()
 {
-}
+    Node *temp = head;
+    while (temp != nullptr)
+    {
+        if (temp->type > 4 && temp->printed == 0)
+        {
+            int currentGroup = temp->type;
+            // std::string currentOutput = "";
+            std::string currentOutput = temp->varname;
+            temp->printed = 1;
+            temp = temp->next;
+            while (temp != nullptr)
+            {
+                if (temp->type == currentGroup)
+                {
+                    if (currentOutput == "")
+                    {
+                        currentOutput = temp->varname;
+                        temp->printed = 1;
+                    }
+                    else
+                    {
+                        currentOutput += ", " + temp->varname;
+                        temp->printed = 1;
+                    }
+                }
+                temp = temp->next;
+            }
+            if (currentOutput != "")
+            {
+                std::cout << currentOutput << ": ? #" << std::endl;
+            }
+            temp = head;
+        }
+        else if (temp->type <= 3 && temp->printed == 0)
+        {
+            std::string type = intToType(temp->type);
+            int currentType = temp->type;
+            std::string currentOutput = temp->varname + ": " + type + " #";
+            std::cout << currentOutput << std::endl;
+            temp->printed = 1;
+            while (temp->next != nullptr && temp->next->type == currentType)
+            {
+                temp = temp->next;
+                int currentType = temp->type;
+                std::string currentOutput = temp->varname + ": " + type + " #";
+                std::cout << currentOutput << std::endl;
+                temp->printed = 1;
+            }
+        }
+        else
+        {
+            temp = temp->next;
+        }
+    }
+} /**/
 
 void LinkedList::printList() const
 {

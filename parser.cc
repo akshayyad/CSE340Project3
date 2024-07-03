@@ -862,7 +862,7 @@ int main()
 	Parser *parseProgram = new Parser();
 	i = parseProgram->parse_program();
 
-	parseProgram->symbol_table.printList();
+	// parseProgram->symbol_table.printList();
 	parseProgram->symbol_table.outputVars();
 	// parseProgram->assignments.printAssignments();
 	// cout << "\nEnd of Program" << endl;
