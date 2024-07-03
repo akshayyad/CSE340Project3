@@ -94,6 +94,73 @@ void LinkedList::rearrangeTypes(int oldType, int newType)
     }
 }
 
+std::string LinkedList::intToType(int type)
+{
+    switch (type)
+    {
+    case 1:
+        return "int";
+    case 2:
+        return "real";
+    case 3:
+        return "bool";
+    default:
+        return "?";
+    }
+}
+
+/*
+void LinkedList::outputVars()
+{
+    Node *temp = head;
+    // First Print out the Known Vars
+    while (temp != nullptr)
+    {
+        if (temp->type >= 1 && temp->type <= 3)
+        {
+            // int type = temp->type;
+            // std::string currentTypeName = intToType(type);
+            //  x: int #
+            std::cout << temp->varname << ": " << intToType(temp->type) << " #"
+                      << std::endl;
+        }
+        temp = temp->next;
+    }
+    // Then Print out the Unknown Vars
+    // x5, y5: ? #
+    for (int i = 5; i < global; i++)
+    {
+        // printf("Group %d:\n", i);
+        std::string currentGroup = "";
+        temp = head;
+        while (temp != nullptr)
+        {
+            // printf("I am called with Group: %d\n", i);
+            if (temp->type == i)
+            {
+                if (currentGroup == "")
+                {
+                    currentGroup = temp->varname;
+                }
+                else
+                {
+                    currentGroup += ", " + temp->varname;
+                }
+            }
+            temp = temp->next;
+        }
+        if (currentGroup != "")
+        {
+            std::cout << currentGroup << ": ? #" << std::endl;
+        }
+    }
+}
+*/
+
+void LinkedList::outputVars()
+{
+}
+
 void LinkedList::printList() const
 {
     Node *temp = head;

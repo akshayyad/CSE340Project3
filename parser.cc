@@ -770,7 +770,7 @@ int Parser::parse_switchstmt()
 	}
 
 	int switchConditionResult = parse_expression();
-	printf("Switch Condition Result: %d\n", switchConditionResult);
+	// printf("Switch Condition Result: %d\n", switchConditionResult);
 	if (switchConditionResult <= 4 && switchConditionResult != 1)
 	{
 		c5_error(token.line_no);
@@ -863,6 +863,7 @@ int main()
 	i = parseProgram->parse_program();
 
 	parseProgram->symbol_table.printList();
+	parseProgram->symbol_table.outputVars();
 	// parseProgram->assignments.printAssignments();
 	// cout << "\nEnd of Program" << endl;
 	return 0;

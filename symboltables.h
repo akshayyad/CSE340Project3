@@ -45,6 +45,8 @@ public:
     int search(const std::string &varname);
     void rearrangeTypes(int oldType, int newType);
     void printList() const;
+    std::string intToType(int type);
+    void outputVars();
     void clear();
 };
 
