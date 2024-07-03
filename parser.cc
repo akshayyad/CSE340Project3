@@ -512,12 +512,12 @@ int Parser::parse_expression()
 		lexer.UngetToken(token);
 		int operatorType = parse_binaryOperator();
 		// printf("Operator Type: %d\n", operatorType);
-		printf("Entering Arithmetic Parse Expession\n");
+		// printf("Entering Arithmetic Parse Expession\n");
 		int firstOperandType = parse_expression();
-		printf("First Operand Type: %s\n", changeTypeFromInt(firstOperandType).c_str());
+		// printf("First Operand Type: %s\n", changeTypeFromInt(firstOperandType).c_str());
 		int secondOperandType = parse_expression();
-		printf("Second Operand Type: %s\n", changeTypeFromInt(secondOperandType).c_str());
-		printf("Exiting Arithmetic Parse Expession\n");
+		// printf("Second Operand Type: %s\n", changeTypeFromInt(secondOperandType).c_str());
+		// printf("Exiting Arithmetic Parse Expession\n");
 
 		if (firstOperandType != secondOperandType)
 		{
@@ -558,12 +558,12 @@ int Parser::parse_expression()
 
 		lexer.UngetToken(token);
 		int operatorType = parse_binaryOperator();
-		printf("Entering Comparison Parse Expession\n");
+		// printf("Entering Comparison Parse Expession\n");
 		int firstOperandType = parse_expression();
-		printf("First Operand Type: %s\n", changeTypeFromInt(firstOperandType).c_str());
+		// printf("First Operand Type: %s\n", changeTypeFromInt(firstOperandType).c_str());
 		int secondOperandType = parse_expression();
-		printf("Second Operand Type: %s\n", changeTypeFromInt(secondOperandType).c_str());
-		printf("Exiting Comparison Parse Expession\n");
+		// printf("Second Operand Type: %s\n", changeTypeFromInt(secondOperandType).c_str());
+		// printf("Exiting Comparison Parse Expession\n");
 
 		if (firstOperandType != secondOperandType)
 		{
@@ -598,7 +598,7 @@ int Parser::parse_expression()
 	else if (token.token_type == ID || token.token_type == NUM || token.token_type == REALNUM || token.token_type == TR || token.token_type == FA)
 	{
 		// printf("Calling on %s\n", token.lexeme.c_str());
-		printf("Token: %s\n", token.lexeme.c_str());
+		// printf("Token: %s\n", token.lexeme.c_str());
 		lexer.UngetToken(token);
 		// printf("%s\n", token.lexeme.c_str());
 		int type = parse_primary();
@@ -922,7 +922,7 @@ int main()
 	Parser *parseProgram = new Parser();
 	i = parseProgram->parse_program();
 
-	parseProgram->symbol_table.printList();
+	// parseProgram->symbol_table.printList();
 	parseProgram->symbol_table.outputVars();
 	// parseProgram->assignments.printAssignments();
 	// cout << "\nEnd of Program" << endl;
