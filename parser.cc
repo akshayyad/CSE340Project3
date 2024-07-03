@@ -466,7 +466,17 @@ int Parser::parse_expression()
 	{
 		lexer.UngetToken(token);
 		parse_unaryOperator();
-		parse_expression();
+		int requiredBooleanExpression = parse_expression();
+		// printf("Required Boolean Expression: %d\n", requiredBooleanExpression);
+		if (requiredBooleanExpression != 3)
+		{
+			c3_error(token.line_no);
+		}
+		else
+		{
+			// printf("Yoyo\n");
+			return (3);
+		}
 	}
 	else if (token.token_type == PLUS || token.token_type == MINUS || token.token_type == MULT || token.token_type == DIV)
 	{
@@ -519,9 +529,27 @@ int Parser::parse_expression()
 		// int currentGroup = group;
 
 		lexer.UngetToken(token);
-		parse_binaryOperator();
-		parse_expression();
-		parse_expression();
+		int operatorType = parse_binaryOperator();
+		int firstOperandType = parse_expression();
+		int secondOperandType = parse_expression();
+
+		if (firstOperandType != secondOperandType)
+		{
+			if (secondOperandType > 4 && firstOperandType > 4)
+			{
+				symbol_table.rearrangeTypes(secondOperandType, firstOperandType);
+				secondOperandType = firstOperandType;
+				return (3);
+			}
+			else
+			{
+				c2_error(token.line_no);
+			}
+		}
+		else
+		{
+			return 3;
+		}
 	}
 	else if (token.token_type == ID || token.token_type == NUM || token.token_type == REALNUM || token.token_type == TR || token.token_type == FA)
 	{
