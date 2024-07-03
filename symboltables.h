@@ -43,6 +43,8 @@ public:
     Node *getHead() const;
     void assignTypes(int amount, TokenType type);
     void addNode(const std::string &varname, int type, int group);
+    void removeNode(const std::string &varname);
+    int searchForGlobals(const std::string &varname);
     int search(const std::string &varname);
     void rearrangeTypes(int oldType, int newType);
     void printList() const;

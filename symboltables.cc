@@ -55,6 +55,50 @@ void LinkedList::addNode(const std::string &varname, int type, int group)
     }
 }
 
+void LinkedList::removeNode(const std::string &varname)
+{
+    Node *temp = head;
+    while (temp != nullptr)
+    {
+        if (temp->varname == varname)
+        {
+            if (temp->prev != nullptr)
+            {
+                temp->prev->next = temp->next;
+            }
+            if (temp->next != nullptr)
+            {
+                temp->next->prev = temp->prev;
+            }
+            if (temp == head)
+            {
+                head = temp->next;
+            }
+            if (temp == tail)
+            {
+                tail = temp->prev;
+            }
+            delete temp;
+            return;
+        }
+        temp = temp->next;
+    }
+}
+
+int LinkedList::searchForGlobals(const std::string &varname)
+{
+    Node *temp = head;
+    while (temp != nullptr)
+    {
+        if (temp->varname == varname)
+        {
+            return 1;
+        }
+        temp = temp->next;
+    }
+    return -1;
+}
+
 int LinkedList::search(const std::string &varname)
 {
     Node *temp = head;

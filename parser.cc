@@ -67,7 +67,9 @@ string changeType(TokenType type)
 	}
 	else
 	{
-		return "ERROR";
+		// Convert int to string
+		string s = to_string(type);
+		return s;
 	}
 }
 
@@ -87,7 +89,8 @@ string changeTypeFromInt(int type)
 	}
 	else
 	{
-		return "ERROR";
+		string s = to_string(type);
+		return s;
 	}
 }
 
@@ -231,9 +234,13 @@ int Parser::parse_varlist()
 				// Gather ID token info here
 				// Add the ID to the symbol table's linked list
 				// printf("Breh\n");
-				symbol_table.addNode(token.lexeme, ID, symbol_table.global);
-				// symbol_table.printList();
-				amount++;
+				if (symbol_table.searchForGlobals(token.lexeme) == -1)
+				{
+					symbol_table.addNode(token.lexeme, ID, symbol_table.global);
+					// symbol_table.printList();
+					amount++;
+				}
+
 				token = lexer.GetToken();
 				if (token.token_type != ID)
 				{
@@ -398,6 +405,7 @@ int Parser::parse_assstmt()
 	}
 	// Get Type of the ID
 	int lhs = symbol_table.search(token.lexeme);
+	string lhsvar = token.lexeme;
 	// printf("LHS ID: %s\n", token.lexeme.c_str());
 	// printf("LHS ID Type: %d\n\n", lhs);
 	/*if (lhs != ERROR)
@@ -416,9 +424,21 @@ int Parser::parse_assstmt()
 	}
 
 	int rhs = parse_expression();
+	// printf("RHS Type: %d\n", rhs);
 
+	/*int global = symbol_table.global;
+	int lhsTypeAfterTraversing = symbol_table.search(lhsvar);
+	if (lhsTypeAfterTraversing == global - 1)
+	{
+		symbol_table.removeNode(token.lexeme);
+		lhsTypeAfterTraversing = -1;
+	}*/
+	lhs = symbol_table.search(lhsvar);
+	// printf("LHS Type After Traversing: %d\n", lhs);
+	// printf("RHS Type: %d\n", rhs);
 	if (lhs == 1 || lhs == 2 || lhs == 3)
 	{
+
 		if (lhs == rhs)
 		{
 		}
@@ -492,10 +512,12 @@ int Parser::parse_expression()
 		lexer.UngetToken(token);
 		int operatorType = parse_binaryOperator();
 		// printf("Operator Type: %d\n", operatorType);
+		printf("Entering Arithmetic Parse Expession\n");
 		int firstOperandType = parse_expression();
-		// printf("First Operand Type: %s\n", changeTypeFromInt(firstOperandType).c_str());
+		printf("First Operand Type: %s\n", changeTypeFromInt(firstOperandType).c_str());
 		int secondOperandType = parse_expression();
-		// printf("Second Operand Type: %s\n", changeTypeFromInt(secondOperandType).c_str());
+		printf("Second Operand Type: %s\n", changeTypeFromInt(secondOperandType).c_str());
+		printf("Exiting Arithmetic Parse Expession\n");
 
 		if (firstOperandType != secondOperandType)
 		{
@@ -526,7 +548,7 @@ int Parser::parse_expression()
 				c2_error(token.line_no);
 			}
 		}
-		// printf("First Operand Type: %s\n", changeTypeFromInt(firstOperandType).c_str());
+		// printf("Second Operand Type: %s\n", changeTypeFromInt(secondOperandType).c_str());
 		return secondOperandType;
 	}
 	else if (token.token_type == GREATER || token.token_type == LESS || token.token_type == GTEQ || token.token_type == LTEQ || token.token_type == EQUAL || token.token_type == NOTEQUAL)
@@ -536,10 +558,12 @@ int Parser::parse_expression()
 
 		lexer.UngetToken(token);
 		int operatorType = parse_binaryOperator();
+		printf("Entering Comparison Parse Expession\n");
 		int firstOperandType = parse_expression();
-		// printf("First Operand Type: %s\n", changeTypeFromInt(firstOperandType).c_str());
+		printf("First Operand Type: %s\n", changeTypeFromInt(firstOperandType).c_str());
 		int secondOperandType = parse_expression();
-		// printf("Second Operand Type: %s\n", changeTypeFromInt(secondOperandType).c_str());
+		printf("Second Operand Type: %s\n", changeTypeFromInt(secondOperandType).c_str());
+		printf("Exiting Comparison Parse Expession\n");
 
 		if (firstOperandType != secondOperandType)
 		{
@@ -574,6 +598,7 @@ int Parser::parse_expression()
 	else if (token.token_type == ID || token.token_type == NUM || token.token_type == REALNUM || token.token_type == TR || token.token_type == FA)
 	{
 		// printf("Calling on %s\n", token.lexeme.c_str());
+		printf("Token: %s\n", token.lexeme.c_str());
 		lexer.UngetToken(token);
 		// printf("%s\n", token.lexeme.c_str());
 		int type = parse_primary();
@@ -897,7 +922,7 @@ int main()
 	Parser *parseProgram = new Parser();
 	i = parseProgram->parse_program();
 
-	// parseProgram->symbol_table.printList();
+	parseProgram->symbol_table.printList();
 	parseProgram->symbol_table.outputVars();
 	// parseProgram->assignments.printAssignments();
 	// cout << "\nEnd of Program" << endl;
