@@ -775,6 +775,10 @@ int Parser::parse_switchstmt()
 	{
 		c5_error(token.line_no);
 	}
+	else if (switchConditionResult > 4)
+	{
+		symbol_table.rearrangeTypes(switchConditionResult, 1);
+	}
 
 	token = lexer.GetToken();
 	if (token.token_type != RPAREN)
