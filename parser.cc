@@ -696,7 +696,13 @@ int Parser::parse_ifstmt()
 	{
 		syntax_error();
 	}
-	parse_expression();
+
+	int ifConditionResult = parse_expression();
+	if (ifConditionResult != 3)
+	{
+		c4_error(token.line_no);
+	}
+
 	token = lexer.GetToken();
 	if (token.token_type != RPAREN)
 	{
@@ -726,7 +732,13 @@ int Parser::parse_whilestmt()
 	{
 		syntax_error();
 	}
-	parse_expression();
+
+	int whileConditionResult = parse_expression();
+	if (whileConditionResult != 3)
+	{
+		c4_error(token.line_no);
+	}
+
 	token = lexer.GetToken();
 	if (token.token_type != RPAREN)
 	{
@@ -756,7 +768,14 @@ int Parser::parse_switchstmt()
 	{
 		syntax_error();
 	}
-	parse_expression();
+
+	int switchConditionResult = parse_expression();
+	printf("Switch Condition Result: %d\n", switchConditionResult);
+	if (switchConditionResult <= 4 && switchConditionResult != 1)
+	{
+		c5_error(token.line_no);
+	}
+
 	token = lexer.GetToken();
 	if (token.token_type != RPAREN)
 	{
@@ -767,7 +786,10 @@ int Parser::parse_switchstmt()
 	{
 		syntax_error();
 	}
+
+	// No Need to Capture the Result of parse_caselist()
 	parse_caselist();
+
 	token = lexer.GetToken();
 	if (token.token_type != RBRACE)
 	{
