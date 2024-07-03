@@ -468,7 +468,13 @@ int Parser::parse_expression()
 		parse_unaryOperator();
 		int requiredBooleanExpression = parse_expression();
 		// printf("Required Boolean Expression: %d\n", requiredBooleanExpression);
-		if (requiredBooleanExpression != 3)
+
+		if (requiredBooleanExpression > 4)
+		{
+			symbol_table.rearrangeTypes(requiredBooleanExpression, 3);
+			return (3);
+		}
+		else if (requiredBooleanExpression != 3)
 		{
 			c3_error(token.line_no);
 		}
@@ -520,7 +526,7 @@ int Parser::parse_expression()
 				c2_error(token.line_no);
 			}
 		}
-
+		// printf("First Operand Type: %s\n", changeTypeFromInt(firstOperandType).c_str());
 		return secondOperandType;
 	}
 	else if (token.token_type == GREATER || token.token_type == LESS || token.token_type == GTEQ || token.token_type == LTEQ || token.token_type == EQUAL || token.token_type == NOTEQUAL)
@@ -531,11 +537,25 @@ int Parser::parse_expression()
 		lexer.UngetToken(token);
 		int operatorType = parse_binaryOperator();
 		int firstOperandType = parse_expression();
+		// printf("First Operand Type: %s\n", changeTypeFromInt(firstOperandType).c_str());
 		int secondOperandType = parse_expression();
+		// printf("Second Operand Type: %s\n", changeTypeFromInt(secondOperandType).c_str());
 
 		if (firstOperandType != secondOperandType)
 		{
-			if (secondOperandType > 4 && firstOperandType > 4)
+			if (firstOperandType <= 3 && secondOperandType > 4)
+			{
+				symbol_table.rearrangeTypes(secondOperandType, firstOperandType);
+				secondOperandType = firstOperandType;
+				return (3);
+			}
+			else if (firstOperandType > 4 && secondOperandType <= 3)
+			{
+				symbol_table.rearrangeTypes(firstOperandType, secondOperandType);
+				firstOperandType = secondOperandType;
+				return (3);
+			}
+			else if (secondOperandType > 4 && firstOperandType > 4)
 			{
 				symbol_table.rearrangeTypes(secondOperandType, firstOperandType);
 				secondOperandType = firstOperandType;
@@ -698,8 +718,15 @@ int Parser::parse_ifstmt()
 	}
 
 	int ifConditionResult = parse_expression();
-	if (ifConditionResult != 3)
+	// printf("If Condition Result: %d\n", ifConditionResult);
+	if (ifConditionResult > 4)
 	{
+		symbol_table.rearrangeTypes(ifConditionResult, 3);
+		// symbol_table.printList();
+	}
+	else if (ifConditionResult != 3)
+	{
+		// symbol_table.printList();
 		c4_error(token.line_no);
 	}
 
@@ -734,7 +761,11 @@ int Parser::parse_whilestmt()
 	}
 
 	int whileConditionResult = parse_expression();
-	if (whileConditionResult != 3)
+	if (whileConditionResult > 4)
+	{
+		symbol_table.rearrangeTypes(whileConditionResult, 3);
+	}
+	else if (whileConditionResult != 3)
 	{
 		c4_error(token.line_no);
 	}
