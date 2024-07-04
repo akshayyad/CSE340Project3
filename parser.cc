@@ -458,9 +458,14 @@ int Parser::parse_assstmt()
 		}
 		else
 		{
-			if (lhs <= 3)
+			if (lhs <= 3 && rhs <= 3)
 			{
 				c1_error(token.line_no);
+			}
+			else if (lhs <= 3 && rhs > 4)
+			{
+				symbol_table.rearrangeTypes(rhs, lhs);
+				rhs = lhs;
 			}
 			else
 			{
