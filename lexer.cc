@@ -88,9 +88,12 @@ bool LexicalAnalyzer::SkipComments()
         }
         else
         {
-            comments = false;
-            cout << "Syntax Error\n";
-            exit(0);
+            // comments = false;
+            // cout << "I am called\n";
+            // cout << "Syntax Error\n";
+            // exit(0);
+            input.UngetChar(c);
+            input.UngetChar('/');
         }
     }
     else

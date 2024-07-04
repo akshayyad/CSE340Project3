@@ -99,6 +99,20 @@ int LinkedList::searchForGlobals(const std::string &varname)
     return -1;
 }
 
+int LinkedList::findGroup(const std::string &varname)
+{
+    Node *temp = head;
+    while (temp != nullptr)
+    {
+        if (temp->varname == varname)
+        {
+            return temp->type;
+        }
+        temp = temp->next;
+    }
+    return -1;
+}
+
 int LinkedList::search(const std::string &varname)
 {
     Node *temp = head;

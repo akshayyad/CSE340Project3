@@ -17,6 +17,7 @@ using namespace std;
 // Syntax Error Function.
 void syntax_error()
 {
+	// printf("I am called\n");
 	cout << "Syntax Error\n";
 	exit(1);
 }
@@ -122,6 +123,7 @@ int Parser::parse_program()
 	}
 	else
 	{
+		// printf("Error Here 2\n");
 		syntax_error();
 	}
 
@@ -176,6 +178,7 @@ int Parser::parse_vardecl()
 	token = lexer.GetToken();
 	if (token.token_type != ID)
 	{
+		// printf("Error Here 3\n");
 		syntax_error();
 	}
 	lexer.UngetToken(token);
@@ -187,6 +190,7 @@ int Parser::parse_vardecl()
 	token = lexer.GetToken();
 	if (token.token_type != COLON)
 	{
+		// printf("Error Here 4\n");
 		syntax_error();
 	}
 	token = lexer.GetToken();
@@ -198,11 +202,13 @@ int Parser::parse_vardecl()
 		token = lexer.GetToken();
 		if (token.token_type != SEMICOLON)
 		{
+			// printf("Error Here 5\n");
 			syntax_error();
 		}
 	}
 	else
 	{
+		// printf("Error Here 6\n");
 		syntax_error();
 	}
 
@@ -222,6 +228,7 @@ int Parser::parse_varlist()
 	token = lexer.GetToken();
 	if (token.token_type != ID)
 	{
+		// printf("Error Here 7\n");
 		syntax_error();
 	}
 	else
@@ -244,6 +251,7 @@ int Parser::parse_varlist()
 				token = lexer.GetToken();
 				if (token.token_type != ID)
 				{
+					// printf("Error Here 8\n");
 					syntax_error();
 				}
 				t2 = lexer.GetToken();
@@ -295,6 +303,7 @@ int Parser::parse_typename(int numOfVars)
 	}
 	else
 	{
+		// printf("Error Here 9\n");
 		syntax_error();
 	}
 
@@ -318,11 +327,13 @@ int Parser::parse_body()
 		token = lexer.GetToken();
 		if (token.token_type != RBRACE)
 		{
+			// printf("Error Here 10\n");
 			syntax_error();
 		}
 	}
 	else
 	{
+		// printf("Error Here 11\n");
 		syntax_error();
 	}
 
@@ -382,6 +393,7 @@ int Parser::parse_stmt()
 	}
 	else
 	{
+		// printf("Error Here 12\n");
 		syntax_error();
 	}
 
@@ -401,6 +413,7 @@ int Parser::parse_assstmt()
 	token = lexer.GetToken();
 	if (token.token_type != ID)
 	{
+		// printf("Error Here 13\n");
 		syntax_error();
 	}
 	// Get Type of the ID
@@ -420,6 +433,7 @@ int Parser::parse_assstmt()
 	token = lexer.GetToken();
 	if (token.token_type != EQUAL)
 	{
+		// printf("Error Here 14\n");
 		syntax_error();
 	}
 
@@ -464,6 +478,7 @@ int Parser::parse_assstmt()
 	token = lexer.GetToken();
 	if (token.token_type != SEMICOLON)
 	{
+		// printf("Error Here 15\n");
 		syntax_error();
 	}
 
@@ -504,113 +519,157 @@ int Parser::parse_expression()
 			return (3);
 		}
 	}
-	else if (token.token_type == PLUS || token.token_type == MINUS || token.token_type == MULT || token.token_type == DIV)
+	else if (token.token_type == ID || token.token_type == NUM || token.token_type == REALNUM || token.token_type == TR || token.token_type == FA || token.token_type == PLUS || token.token_type == MINUS || token.token_type == MULT || token.token_type == DIV || token.token_type == GREATER || token.token_type == LESS || token.token_type == GTEQ || token.token_type == LTEQ || token.token_type == EQUAL || token.token_type == NOTEQUAL)
 	{
-		// group++;
-		// int currentGroup = group;
-
-		lexer.UngetToken(token);
-		int operatorType = parse_binaryOperator();
-		// printf("Operator Type: %d\n", operatorType);
-		// printf("Entering Arithmetic Parse Expession\n");
-		int firstOperandType = parse_expression();
-		// printf("First Operand Type: %s\n", changeTypeFromInt(firstOperandType).c_str());
-		int secondOperandType = parse_expression();
-		// printf("Second Operand Type: %s\n", changeTypeFromInt(secondOperandType).c_str());
-		// printf("Exiting Arithmetic Parse Expession\n");
-
-		if (firstOperandType != secondOperandType)
+		// Save varname
+		string varnameplease = "";
+		if (token.token_type == ID)
 		{
-			// Check the type matching
-			if (firstOperandType <= 3 && secondOperandType > 4)
+			varnameplease = token.lexeme;
+		}
+		// Run the rest of the Parsing
+		if (token.token_type == PLUS || token.token_type == MINUS || token.token_type == MULT || token.token_type == DIV)
+		{
+			// group++;
+			// int currentGroup = group;
+			/*string currentVarName = "";
+			Token temp = lexer.GetToken();
+			if (temp.token_type == ID)
 			{
-				// printf("I am called\n");
-				symbol_table.rearrangeTypes(secondOperandType, firstOperandType);
-				secondOperandType = firstOperandType;
-				// printf("Hello\n");
+				currentVarName = temp.lexeme;
 			}
-			else if (firstOperandType > 3 && secondOperandType <= 3)
+			lexer.UngetToken(temp);*/
+
+			lexer.UngetToken(token);
+			int operatorType = parse_binaryOperator();
+			// printf("Operator Type: %d\n", operatorType);
+			// printf("Entering Arithmetic Parse Expession\n");
+			int firstOperandType = parse_expression();
+			// printf("First Operand Type: %s\n", changeTypeFromInt(firstOperandType).c_str());
+			int secondOperandType = parse_expression();
+			// printf("Second Operand Type: %s\n", changeTypeFromInt(secondOperandType).c_str());
+			// printf("Exiting Arithmetic Parse Expession\n");
+
+			/*if (firstOperandType > 4)
 			{
-				// printf("I am called2\n");
-				symbol_table.rearrangeTypes(firstOperandType, secondOperandType); //**
-				firstOperandType = secondOperandType;
+				// printf("currentVarName: %s\n", currentVarName.c_str());
+				if (firstOperandType != symbol_table.findGroup(currentVarName))
+				{
+					firstOperandType = symbol_table.findGroup(currentVarName);
+				}
+			}*/
+
+			if (firstOperandType != secondOperandType)
+			{
+				// Check the type matching
+				if (firstOperandType <= 3 && secondOperandType > 4)
+				{
+					// printf("I am called\n");
+					symbol_table.rearrangeTypes(secondOperandType, firstOperandType);
+					secondOperandType = firstOperandType;
+					// printf("Hello\n");
+				}
+				else if (firstOperandType > 3 && secondOperandType <= 3)
+				{
+					// printf("I am called2\n");
+					symbol_table.rearrangeTypes(firstOperandType, secondOperandType); //**
+					firstOperandType = secondOperandType;
+				}
+				else if (firstOperandType > 4 && secondOperandType > 4)
+				{
+					// printf("I am called3\n");
+					symbol_table.rearrangeTypes(secondOperandType, firstOperandType);
+					secondOperandType = firstOperandType;
+				}
+				else
+				{
+					// printf("Hello\n");
+					//  symbol_table.printList();
+					c2_error(token.line_no);
+				}
 			}
-			else if (firstOperandType > 4 && secondOperandType > 4)
+			// printf("Second Operand Type: %s\n", changeTypeFromInt(secondOperandType).c_str());
+			return secondOperandType;
+		}
+		else if (token.token_type == GREATER || token.token_type == LESS || token.token_type == GTEQ || token.token_type == LTEQ || token.token_type == EQUAL || token.token_type == NOTEQUAL)
+		{
+			// group++;
+			// int currentGroup = group;
+			string currentVarName = "";
+			Token temp = lexer.GetToken();
+			if (temp.token_type == ID)
 			{
-				// printf("I am called3\n");
-				symbol_table.rearrangeTypes(secondOperandType, firstOperandType);
-				secondOperandType = firstOperandType;
+				currentVarName = temp.lexeme;
+			}
+			lexer.UngetToken(temp);
+
+			lexer.UngetToken(token);
+			int operatorType = parse_binaryOperator();
+			// printf("Entering Comparison Parse Expession\n");
+			int firstOperandType = parse_expression();
+
+			// printf("First Operand Type: %s\n", changeTypeFromInt(firstOperandType).c_str());
+			int secondOperandType = parse_expression();
+			// printf("Second Operand Type: %s\n", changeTypeFromInt(secondOperandType).c_str());
+			// printf("Exiting Comparison Parse Expession\n");
+
+			if (firstOperandType > 4)
+			{
+				// printf("currentVarName: %s\n", currentVarName.c_str());
+				if (firstOperandType != symbol_table.findGroup(currentVarName))
+				{
+					firstOperandType = symbol_table.findGroup(currentVarName);
+				}
+			}
+
+			if (firstOperandType != secondOperandType)
+			{
+				if (firstOperandType <= 3 && secondOperandType > 4)
+				{
+					symbol_table.rearrangeTypes(secondOperandType, firstOperandType);
+					secondOperandType = firstOperandType;
+					return (3);
+				}
+				else if (firstOperandType > 4 && secondOperandType <= 3)
+				{
+					symbol_table.rearrangeTypes(firstOperandType, secondOperandType);
+					firstOperandType = secondOperandType;
+					return (3);
+				}
+				else if (secondOperandType > 4 && firstOperandType > 4)
+				{
+					symbol_table.rearrangeTypes(secondOperandType, firstOperandType);
+					secondOperandType = firstOperandType;
+					return (3);
+				}
+				else
+				{
+					c2_error(token.line_no);
+				}
 			}
 			else
 			{
-				// printf("Hello\n");
-				//  symbol_table.printList();
-				c2_error(token.line_no);
+				return 3;
 			}
 		}
-		// printf("Second Operand Type: %s\n", changeTypeFromInt(secondOperandType).c_str());
-		return secondOperandType;
-	}
-	else if (token.token_type == GREATER || token.token_type == LESS || token.token_type == GTEQ || token.token_type == LTEQ || token.token_type == EQUAL || token.token_type == NOTEQUAL)
-	{
-		// group++;
-		// int currentGroup = group;
-
-		lexer.UngetToken(token);
-		int operatorType = parse_binaryOperator();
-		// printf("Entering Comparison Parse Expession\n");
-		int firstOperandType = parse_expression();
-		// printf("First Operand Type: %s\n", changeTypeFromInt(firstOperandType).c_str());
-		int secondOperandType = parse_expression();
-		// printf("Second Operand Type: %s\n", changeTypeFromInt(secondOperandType).c_str());
-		// printf("Exiting Comparison Parse Expession\n");
-
-		if (firstOperandType != secondOperandType)
+		else if (token.token_type == ID || token.token_type == NUM || token.token_type == REALNUM || token.token_type == TR || token.token_type == FA)
 		{
-			if (firstOperandType <= 3 && secondOperandType > 4)
+			// printf("Calling on %s\n", token.lexeme.c_str());
+			// printf("Token: %s\n", token.lexeme.c_str());
+			lexer.UngetToken(token);
+			// printf("%s\n", token.lexeme.c_str());
+			int type = parse_primary();
+			if (type == -1)
 			{
-				symbol_table.rearrangeTypes(secondOperandType, firstOperandType);
-				secondOperandType = firstOperandType;
-				return (3);
+				// Set implicit var in Assignments class to current ID
+				assignments.setImplicitVar(token.lexeme);
 			}
-			else if (firstOperandType > 4 && secondOperandType <= 3)
-			{
-				symbol_table.rearrangeTypes(firstOperandType, secondOperandType);
-				firstOperandType = secondOperandType;
-				return (3);
-			}
-			else if (secondOperandType > 4 && firstOperandType > 4)
-			{
-				symbol_table.rearrangeTypes(secondOperandType, firstOperandType);
-				secondOperandType = firstOperandType;
-				return (3);
-			}
-			else
-			{
-				c2_error(token.line_no);
-			}
+			return type;
 		}
-		else
-		{
-			return 3;
-		}
-	}
-	else if (token.token_type == ID || token.token_type == NUM || token.token_type == REALNUM || token.token_type == TR || token.token_type == FA)
-	{
-		// printf("Calling on %s\n", token.lexeme.c_str());
-		// printf("Token: %s\n", token.lexeme.c_str());
-		lexer.UngetToken(token);
-		// printf("%s\n", token.lexeme.c_str());
-		int type = parse_primary();
-		if (type == -1)
-		{
-			// Set implicit var in Assignments class to current ID
-			assignments.setImplicitVar(token.lexeme);
-		}
-		return type;
 	}
 	else
 	{
+		// printf("Error Here 16\n");
 		syntax_error();
 	}
 
@@ -629,6 +688,7 @@ int Parser::parse_unaryOperator()
 	token = lexer.GetToken();
 	if (token.token_type != NOT)
 	{
+		// printf("Error Here 17\n");
 		syntax_error();
 	}
 	// Do something with the NOT
@@ -659,6 +719,7 @@ int Parser::parse_binaryOperator()
 	}
 	else
 	{
+		// printf("Error Here 18\n");
 		syntax_error();
 	}
 
@@ -716,6 +777,7 @@ int Parser::parse_primary()
 	}
 	else
 	{
+		// printf("Error Here 19\n");
 		syntax_error();
 	}
 
@@ -734,11 +796,13 @@ int Parser::parse_ifstmt()
 	token = lexer.GetToken();
 	if (token.token_type != IF)
 	{
+		// printf("Error Here 20\n");
 		syntax_error();
 	}
 	token = lexer.GetToken();
 	if (token.token_type != LPAREN)
 	{
+		// printf("Error Here 21\n");
 		syntax_error();
 	}
 
@@ -758,6 +822,7 @@ int Parser::parse_ifstmt()
 	token = lexer.GetToken();
 	if (token.token_type != RPAREN)
 	{
+		// printf("Error Here 22\n");
 		syntax_error();
 	}
 	parse_body();
@@ -777,11 +842,13 @@ int Parser::parse_whilestmt()
 	token = lexer.GetToken();
 	if (token.token_type != WHILE)
 	{
+		// printf("Error Here 23\n");
 		syntax_error();
 	}
 	token = lexer.GetToken();
 	if (token.token_type != LPAREN)
 	{
+		// printf("Error Here 24\n");
 		syntax_error();
 	}
 
@@ -798,6 +865,7 @@ int Parser::parse_whilestmt()
 	token = lexer.GetToken();
 	if (token.token_type != RPAREN)
 	{
+		// printf("Error Here 25\n");
 		syntax_error();
 	}
 	parse_body();
@@ -817,11 +885,13 @@ int Parser::parse_switchstmt()
 	token = lexer.GetToken();
 	if (token.token_type != SWITCH)
 	{
+		// printf("Error Here 26\n");
 		syntax_error();
 	}
 	token = lexer.GetToken();
 	if (token.token_type != LPAREN)
 	{
+		// printf("Error Here 27\n");
 		syntax_error();
 	}
 
@@ -839,11 +909,13 @@ int Parser::parse_switchstmt()
 	token = lexer.GetToken();
 	if (token.token_type != RPAREN)
 	{
+		// printf("Error Here 28\n");
 		syntax_error();
 	}
 	token = lexer.GetToken();
 	if (token.token_type != LBRACE)
 	{
+		// printf("Error Here 29\n");
 		syntax_error();
 	}
 
@@ -853,6 +925,7 @@ int Parser::parse_switchstmt()
 	token = lexer.GetToken();
 	if (token.token_type != RBRACE)
 	{
+		// printf("Error Here 30\n");
 		syntax_error();
 	}
 
@@ -880,6 +953,7 @@ int Parser::parse_caselist()
 	}
 	else
 	{
+		// printf("Error Here 31\n");
 		syntax_error();
 	}
 
@@ -894,17 +968,20 @@ int Parser::parse_case()
 	token = lexer.GetToken();
 	if (token.token_type != CASE)
 	{
+		// printf("Error Here 32\n");
 		syntax_error();
 	}
 	token = lexer.GetToken();
 	if (token.token_type != NUM)
 	{
+		// printf("Error Here 33\n");
 		syntax_error();
 	}
 	// Do something with this
 	token = lexer.GetToken();
 	if (token.token_type != COLON)
 	{
+		// printf("Error Here 34\n");
 		syntax_error();
 	}
 	parse_body();
