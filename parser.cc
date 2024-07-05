@@ -419,37 +419,16 @@ int Parser::parse_assstmt()
 	// Get Type of the ID
 	int lhs = symbol_table.search(token.lexeme);
 	string lhsvar = token.lexeme;
-	// printf("LHS ID: %s\n", token.lexeme.c_str());
-	// printf("LHS ID Type: %d\n\n", lhs);
-	/*if (lhs != ERROR)
-	{
-		// Add the assignment to the list
-		string assignment = token.lexeme + ": " + changeTypeFromInt(lhs) + " #";
-		assignments.addAssignment(assignment);
-	}*/
-
-	// printf("LHS ID Type: %s\n", changeType(idType).c_str());
 
 	token = lexer.GetToken();
 	if (token.token_type != EQUAL)
 	{
-		// printf("Error Here 14\n");
 		syntax_error();
 	}
 
 	int rhs = parse_expression();
-	// printf("RHS Type: %d\n", rhs);
-
-	/*int global = symbol_table.global;
-	int lhsTypeAfterTraversing = symbol_table.search(lhsvar);
-	if (lhsTypeAfterTraversing == global - 1)
-	{
-		symbol_table.removeNode(token.lexeme);
-		lhsTypeAfterTraversing = -1;
-	}*/
 	lhs = symbol_table.search(lhsvar);
-	// printf("LHS Type After Traversing: %d\n", lhs);
-	// printf("RHS Type: %d\n", rhs);
+
 	if (lhs == 1 || lhs == 2 || lhs == 3)
 	{
 
